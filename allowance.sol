@@ -25,12 +25,18 @@ contract AllowanceContract {
         }
     }
 
-    function setAllowance(address recipient, uint amount) public {
-        require(msg.sender == provider, "Only the provider can set allowances");
-        allowances[recipient] = amount;
-        emit AllowanceSet(recipient, amount, startTime, endTime);
+
+  function setAllowances(address[] memory recipients, uint[] memory amounts) public {
+    require(msg.sender == provider, "Only the provider can set allowances");
+    require(recipients.length == amounts.length, "Arrays length mismatch");
+
+    for (uint i = 0; i < recipients.length; i++) {
+        allowances[recipients[i]] = amounts[i];
     }
 
+    emit AllowanceSet(recipients[recipients.length - 1], amounts[amounts.length - 1], startTime, endTime); 
+ }  
+ 
     function transferAllowance() public {
         // Add logic here to transfer allowance based on start and end time
         emit AllowanceTransferred(address(0), 1000, transferMessage);
