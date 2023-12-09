@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+
+interface IPUSHCommInterface {
+    function sendNotification(address _channel, address _recipient, bytes calldata _identity) external;
+}
 contract AllowanceContract {
     address public provider;
     mapping(address => uint) public allowances;
@@ -27,6 +31,27 @@ contract AllowanceContract {
         contractBalance+=msg.value;
     }
 
+    function send_notification(string memory title,string memory body,address to) internal {
+    IPUSHCommInterface(0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa).sendNotification(
+    0x5605C29B9a6b86aDf7C570bb419580f5E112D2ac, // from channel - recommended to set channel via dApp and put it's value -> then once contract is deployed, go back and add the contract address as delegate for your channel
+    to,
+    // to recipient, put address(this) in case you want Broadcast or Subset. For targeted put the address to which you want to send
+    bytes(
+        string(
+            // We are passing identity here: https://push.org/docs/notifications/notification-standards/notification-standards-advance/#notification-identity
+            abi.encodePacked(
+                "0", // this represents minimal identity, learn more: https://push.org/docs/notifications/notification-standards/notification-standards-advance/#notification-identity
+                "+", // segregator
+                "3", // define notification type:  https://push.org/docs/notifications/build/types-of-notification (1, 3 or 4) = (Broadcast, targeted or subset)
+                "+", // segregator
+                title, // this is notification title
+                "+", // segregator
+                body// notification body
+            )
+        )
+    )
+);
+    }
     function deposit() public payable {
         contractBalance+=msg.value;
     }
@@ -38,8 +63,8 @@ contract AllowanceContract {
 
         for (uint i = 0; i < _recipients.length; i++) {
             allowances[_recipients[i]] = amounts[i];
+            send_notification("Allowance","You have been allowed 10 USDC",_recipients[i]);
         }
-
         emit AllowanceSet(_recipients[_recipients.length - 1], amounts[amounts.length - 1], startTime, endTime);
     }
 
