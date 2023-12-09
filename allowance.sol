@@ -1,6 +1,3 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-
 contract AllowanceContract {
     address public provider;
     mapping(address => uint) public allowances;
@@ -8,6 +5,7 @@ contract AllowanceContract {
     uint public startTime;
     uint public endTime;
     string public transferMessage;
+    address[] public recipients;
 
     event AllowanceSet(address indexed recipient, uint amount, uint startTime, uint endTime);
     event AllowanceTransferred(address indexed recipient, uint amount, string message);
@@ -19,27 +17,32 @@ contract AllowanceContract {
         transferDay = _transferDay;
         startTime = _startTime;
         endTime = _endTime;
+        recipients = _recipients;
 
         for (uint i = 0; i < _recipients.length; i++) {
             allowances[_recipients[i]] = 0;
         }
     }
 
+    function setAllowances(address[] memory _recipients, uint[] memory amounts) public {
+        require(msg.sender == provider, "Only the provider can set allowances");
+        require(_recipients.length == amounts.length, "Arrays length mismatch");
 
-  function setAllowances(address[] memory recipients, uint[] memory amounts) public {
-    require(msg.sender == provider, "Only the provider can set allowances");
-    require(recipients.length == amounts.length, "Arrays length mismatch");
+        for (uint i = 0; i < _recipients.length; i++) {
+            allowances[_recipients[i]] = amounts[i];
+        }
 
-    for (uint i = 0; i < recipients.length; i++) {
-        allowances[recipients[i]] = amounts[i];
+        emit AllowanceSet(_recipients[_recipients.length - 1], amounts[amounts.length - 1], startTime, endTime);
     }
 
-    emit AllowanceSet(recipients[recipients.length - 1], amounts[amounts.length - 1], startTime, endTime); 
- }  
- 
     function transferAllowance() public {
-        // Add logic here to transfer allowance based on start and end time
-        emit AllowanceTransferred(address(0), 1000, transferMessage);
+        require(block.timestamp >= startTime && block.timestamp <= endTime, "Allowance transfer not allowed at this time");
+
+        for (uint i = 0; i < recipients.length; i++) {
+            address recipient = recipients[i];
+            uint amount = allowances[recipient];
+            emit AllowanceTransferred(recipient, amount, transferMessage);
+        }
     }
 
     function removeRecipient(address recipient) public {
