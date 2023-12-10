@@ -2,9 +2,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_provider",
-				"type": "address"
+				"internalType": "uint256[]",
+				"name": "amounts",
+				"type": "uint256[]"
 			},
 			{
 				"internalType": "address[]",
@@ -211,7 +211,7 @@
 		],
 		"name": "setAllowances",
 		"outputs": [],
-		"stateMutability": "payable",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -255,7 +255,7 @@
 		],
 		"name": "transferAllowance",
 		"outputs": [],
-		"stateMutability": "payable",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
