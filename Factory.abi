@@ -21,28 +21,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "addr_to_contract",
-		"outputs": [
-			{
-				"internalType": "contract AllowanceContract",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_provider",
-				"type": "address"
+				"internalType": "uint256[]",
+				"name": "amounts",
+				"type": "uint256[]"
 			},
 			{
 				"internalType": "address[]",
@@ -68,6 +49,25 @@
 		"name": "deployChildContract",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "addr_to_contract",
+		"outputs": [
+			{
+				"internalType": "contract AllowanceContract",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]
